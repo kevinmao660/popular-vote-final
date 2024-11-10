@@ -17,8 +17,7 @@ driver.implicitly_wait(5)
 
 #team codes tp iterate through
 states = ["Arizona","California", "Colorado","Maryland","Nevada",
-  "New Jersey","Oregon","Utah","Washington"
-]
+  "New Jersey","Oregon","Utah","Washington"]
 
 base_url = "https://www.nytimes.com/interactive/2024/11/05/us/elections/results-{}-president.html"
 
@@ -88,9 +87,7 @@ print(trump)
 print(kamala)
 
 driver.get('https://www.nytimes.com/interactive/2024/11/05/us/elections/results-president.html')
-time.sleep(2)  # Adjust if necessary to allow page content to load
-    
-# Parse the page source with BeautifulSoup
+time.sleep(2)
 soup = BeautifulSoup(driver.page_source, 'html.parser')
 
 # Find the Democrat votes element
@@ -98,29 +95,31 @@ votesDem = soup.find(class_='footer-labels dem eln-1ljsxb2')
 if votesDem:
     temp = votesDem.find(class_='all-votes-numbers eln-1ljsxb2').get_text(strip=True).replace(",", "").split(" ")
     kamalavotes = int(temp[0])
-else:
-    kamalavotes = 0  # Or handle the case where the element is not found
 
-# Find the Republican votes element
 votesRep = soup.find(class_='footer-labels gop eln-1ljsxb2')
 if votesRep:
     temp = votesRep.find(class_='all-votes-numbers eln-1ljsxb2').get_text(strip=True).replace(",", "").split(" ")
     trumpvotes = int(temp[0])
-else:
-    trumpvotes = 0  # Or handle the case where the element is not found
-
+print("CURRENT")
 print("Kamala Votes:", kamalavotes)
 print("Trump Votes:", trumpvotes)
+#this is actual total votes counted
+allVotes = 74650754 + 70916946 + 697489 + 676502 + 607373 + 353576
+print((trumpvotes)/(allVotes))
+print((kamalavotes) / (allVotes))
+print((trumpvotes)/(allVotes) - (kamalavotes) / (allVotes))
 
+print("-----------------")
 
-print("CURRENT")
+print("PROJECTED")
 print(kamalavotes)
 print(trumpvotes)
-
 driver.quit()
 projectedKamala = kamala + kamalavotes
 projectedTrump = trump + trumpvotes
-projectedTotal = projectedKamala + projectedTrump
+#this was the % of votes said to have been counted
+projectedTotal = allVotes / 0.936
 
 print((projectedTrump/projectedTotal))
 print((projectedKamala/projectedTotal))
+print((projectedTrump/projectedTotal) - (projectedKamala/projectedTotal))
