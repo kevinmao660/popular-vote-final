@@ -60,18 +60,18 @@ for state in states:
             temp.append(margin)
             if margin[0] == "T":
                 num = float(re.search(r'[-+]?\d*\.?\d+$', margin).group())
-                temp.append(0.495 + (num)/200)
-                temp.append(0.495 - (num)/200)
+                temp.append(0.491 + (num)/200)
+                temp.append(0.491 - (num)/200)
             else:
-                temp.append(0.495 - (num)/200)
-                temp.append(0.495 + (num)/200)
+                num = float(re.search(r'[-+]?\d*\.?\d+$', margin).group())
+                temp.append(0.491 - (num)/200)
+                temp.append(0.491 + (num)/200)
 
             #gets total vote in county
             temp.append(total)
 
             if percent == ">95%": 
                 percent = 1
-                break
             else: 
                 percent = (int)(percent[0:2]) / 100
 
@@ -87,3 +87,14 @@ for state in states:
 driver.quit()
 print(trump)
 print(kamala)
+
+#as of nov 10th 12:42 am
+kamalavotes = 70916946
+trumpvotes = 74650754
+
+projectedKamala = kamala + kamalavotes
+projectedTrump = trump + trumpvotes
+projectedTotal = projectedKamala + projectedTrump
+
+print((projectedTrump/projectedTotal))
+print((projectedKamala/projectedTotal))
