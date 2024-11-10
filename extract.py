@@ -1,12 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-import pprint
-import json
-from statistics import mean
 import time
 from bs4 import BeautifulSoup
-import requests
-from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 import re
 
@@ -16,8 +11,20 @@ driver = webdriver.Chrome(options=options)
 driver.implicitly_wait(5)
 
 #team codes tp iterate through
-states = ["Arizona","California", "Colorado","Maryland","Nevada",
-  "New Jersey","Oregon","Utah","Washington"]
+states = ["Oregon","Arizona","California", "Colorado","Maryland","Nevada",
+  "New-Jersey","Utah","Washington"]
+abr = {
+    "Arizona": "AZ",
+    "California": "CA",
+    "Colorado": "CO",
+    "Maryland": "MD",
+    "Nevada": "NV",
+    "New-Jersey": "NJ",
+    "Oregon": "OR",
+    "Utah": "UT",
+    "Washington": "WA"
+}
+
 
 base_url = "https://www.nytimes.com/interactive/2024/11/05/us/elections/results-{}-president.html"
 
@@ -34,6 +41,29 @@ for state in states:
     
     # Parse the page source with BeautifulSoup
     soup = BeautifulSoup(driver.page_source, 'html.parser')
+
+    baseTrump = 'candidate-results-row-{}-G-P-2024-11-05-trump-d'
+    trumpStateId = baseTrump.format(abr[state])
+
+    baseKamala = 'candidate-results-row-{}-G-P-2024-11-05-harris-k'
+    kamalaStateId = baseKamala.format(abr[state])
+    other = 0
+
+    print("STATE: " + state)
+    # Get the data on how many votes other candidates have
+    trumpRow = soup.find(id=trumpStateId)
+    trumpStatePercent = float(trumpRow.find_all(class_='eln-17i7zw9')[1].get_text(strip=True)) / 100
+
+    kamalaRow = soup.find(id=kamalaStateId)
+    kamalaStatePercent = float(kamalaRow.find_all(class_='eln-17i7zw9')[1].get_text(strip=True)) / 100
+
+    print(trumpStatePercent)
+    print(kamalaStatePercent)
+    other = 1 - kamalaStatePercent - trumpStatePercent
+    print("Other percentage " + str(other))
+    print("kamala + trump discounted percentage: " + str(0.5 - (other/2)))
+
+
     elements = soup.find_all(class_='eln-d65730')
 
     actions = ActionChains(driver)
@@ -59,12 +89,12 @@ for state in states:
             temp.append(margin)
             if margin[0] == "T":
                 num = float(re.search(r'[-+]?\d*\.?\d+$', margin).group())
-                temp.append(0.491 + (num)/200)
-                temp.append(0.491 - (num)/200)
+                temp.append(0.5 - (other/2) + (num)/200)
+                temp.append(0.5 - (other/2) - (num)/200)
             else:
                 num = float(re.search(r'[-+]?\d*\.?\d+$', margin).group())
-                temp.append(0.491 - (num)/200)
-                temp.append(0.491 + (num)/200)
+                temp.append(0.5 - (other/2) - (num)/200)
+                temp.append(0.5 - (other/2) + (num)/200)
 
             #gets total vote in county
             temp.append(total)
@@ -103,7 +133,7 @@ if votesRep:
 print("CURRENT")
 print("Kamala Votes:", kamalavotes)
 print("Trump Votes:", trumpvotes)
-#this is actual total votes counted
+#this is actual total votes counted Nov 10th 1:21 AM
 allVotes = 74650754 + 70916946 + 697489 + 676502 + 607373 + 353576
 print((trumpvotes)/(allVotes))
 print((kamalavotes) / (allVotes))
@@ -117,7 +147,7 @@ print(trumpvotes)
 driver.quit()
 projectedKamala = kamala + kamalavotes
 projectedTrump = trump + trumpvotes
-#this was the % of votes said to have been counted
+#this was the % of votes said to have been counted Nov 10th 1:21 AM
 projectedTotal = allVotes / 0.936
 
 print((projectedTrump/projectedTotal))
