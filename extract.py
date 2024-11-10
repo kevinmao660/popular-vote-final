@@ -133,8 +133,8 @@ if votesRep:
 print("CURRENT")
 print("Kamala Votes:", kamalavotes)
 print("Trump Votes:", trumpvotes)
-#this is actual total votes counted Nov 10th 1:21 AM
-allVotes = 74650754 + 70916946 + 697489 + 676502 + 607373 + 353576
+#this is actual total votes counted Nov 10th 12:42 PM
+allVotes = trumpvotes + kamalavotes + 698985 + 677091 + 608582 + 354842
 print((trumpvotes)/(allVotes))
 print((kamalavotes) / (allVotes))
 print((trumpvotes)/(allVotes) - (kamalavotes) / (allVotes))
@@ -148,7 +148,7 @@ driver.quit()
 projectedKamala = kamala + kamalavotes
 projectedTrump = trump + trumpvotes
 #this was the % of votes said to have been counted Nov 10th 1:21 AM
-projectedTotal = allVotes / 0.936
+projectedTotal = allVotes / 0.937
 
 print((projectedTrump/projectedTotal))
 print((projectedKamala/projectedTotal))
