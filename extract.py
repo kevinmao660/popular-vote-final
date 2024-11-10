@@ -84,14 +84,40 @@ for state in states:
             all_states_data.append(temp)
             print(temp)
 
-driver.quit()
 print(trump)
 print(kamala)
 
-#as of nov 10th 12:42 am
-kamalavotes = 70916946
-trumpvotes = 74650754
+driver.get('https://www.nytimes.com/interactive/2024/11/05/us/elections/results-president.html')
+time.sleep(2)  # Adjust if necessary to allow page content to load
+    
+# Parse the page source with BeautifulSoup
+soup = BeautifulSoup(driver.page_source, 'html.parser')
 
+# Find the Democrat votes element
+votesDem = soup.find(class_='footer-labels dem eln-1ljsxb2')
+if votesDem:
+    temp = votesDem.find(class_='all-votes-numbers eln-1ljsxb2').get_text(strip=True).replace(",", "").split(" ")
+    kamalavotes = int(temp[0])
+else:
+    kamalavotes = 0  # Or handle the case where the element is not found
+
+# Find the Republican votes element
+votesRep = soup.find(class_='footer-labels gop eln-1ljsxb2')
+if votesRep:
+    temp = votesRep.find(class_='all-votes-numbers eln-1ljsxb2').get_text(strip=True).replace(",", "").split(" ")
+    trumpvotes = int(temp[0])
+else:
+    trumpvotes = 0  # Or handle the case where the element is not found
+
+print("Kamala Votes:", kamalavotes)
+print("Trump Votes:", trumpvotes)
+
+
+print("CURRENT")
+print(kamalavotes)
+print(trumpvotes)
+
+driver.quit()
 projectedKamala = kamala + kamalavotes
 projectedTrump = trump + trumpvotes
 projectedTotal = projectedKamala + projectedTrump
