@@ -12,7 +12,7 @@ driver.implicitly_wait(5)
 
 #team codes tp iterate through
 states = ["Oregon","Arizona","California", "Colorado","Maryland","Nevada",
-  "New-Jersey","Utah","Washington"]
+  "New-Jersey","Utah","Washington", "New-York", "Nebraska",]
 abr = {
     "Arizona": "AZ",
     "California": "CA",
@@ -22,7 +22,10 @@ abr = {
     "New-Jersey": "NJ",
     "Oregon": "OR",
     "Utah": "UT",
-    "Washington": "WA"
+    "Washington": "WA",
+    "New-York": "NY",
+    "Nebraska": "NE",
+
 }
 
 
@@ -108,8 +111,8 @@ for state in states:
             temp.append(percent)
 
         if len(temp) == 6:
-            trump += temp[2] * temp[4] * (1-temp[5])
-            kamala += temp[3] * temp[4] * (1-temp[5])
+            trump += temp[2] * (temp[4] / temp[5] - temp[4])
+            kamala += temp[3] * (temp[4] / temp[5] - temp[4])
             all_states_data.append(temp)
             print(temp)
 
@@ -133,8 +136,8 @@ if votesRep:
 print("CURRENT")
 print("Kamala Votes:", kamalavotes)
 print("Trump Votes:", trumpvotes)
-#this is actual total votes counted Nov 10th 12:42 PM
-allVotes = trumpvotes + kamalavotes + 698985 + 677091 + 608582 + 354842
+#this is actual total votes counted Nov 11th 11:45 Am
+allVotes = trumpvotes + kamalavotes + 720199 + 692561 + 615674 + 363403
 print((trumpvotes)/(allVotes))
 print((kamalavotes) / (allVotes))
 print((trumpvotes)/(allVotes) - (kamalavotes) / (allVotes))
@@ -147,8 +150,8 @@ print(trumpvotes)
 driver.quit()
 projectedKamala = kamala + kamalavotes
 projectedTrump = trump + trumpvotes
-#this was the % of votes said to have been counted Nov 10th 1:21 AM
-projectedTotal = allVotes / 0.937
+#this was the % of votes said to have been counted Nov 10th 12:42 PM
+projectedTotal = allVotes / 0.951
 
 print((projectedTrump/projectedTotal))
 print((projectedKamala/projectedTotal))
