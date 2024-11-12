@@ -11,22 +11,44 @@ driver = webdriver.Chrome(options=options)
 driver.implicitly_wait(5)
 
 #team codes tp iterate through
-states = ["Oregon","Arizona","California", "Colorado","Maryland","Nevada",
-  "New-Jersey","Utah","Washington", "New-York", "Nebraska",]
-abr = {
-    "Arizona": "AZ",
-    "California": "CA",
-    "Colorado": "CO",
-    "Maryland": "MD",
-    "Nevada": "NV",
-    "New-Jersey": "NJ",
-    "Oregon": "OR",
-    "Utah": "UT",
-    "Washington": "WA",
-    "New-York": "NY",
-    "Nebraska": "NE",
+# states = ["Oregon","Arizona","California", "Colorado","Maryland","Nevada",
+#   "New-Jersey","Utah","Washington", "New-York", "Nebraska",]
+# abr = {
+#     "Arizona": "AZ",
+#     "California": "CA",
+#     "Colorado": "CO",
+#     "Maryland": "MD",
+#     "Nevada": "NV",
+#     "New-Jersey": "NJ",
+#     "Oregon": "OR",
+#     "Utah": "UT",
+#     "Washington": "WA",
+#     "New-York": "NY",
+#     "Nebraska": "NE",
 
+# }
+
+states = [
+    "Arizona", "California", "Colorado",
+    "Connecticut", "Illinois", "Maryland",
+    "Mississippi", "New-Jersey", "New-York", 
+    "Oregon", "Pennsylvania",
+    "Utah", "Virginia", "Washington",
+]
+
+abr = {
+    "Alabama": "AL", "Arizona": "AZ", "Arkansas": "AR", "California": "CA",
+    "Colorado": "CO", "Connecticut": "CT", "Illinois": "IL", "Maryland": "MD",
+    "Massachusetts": "MA", "Michigan": "MI", "Minnesota": "MN", "Mississippi": "MS", 
+    "Missouri": "MO", "Montana": "MT", "Nebraska": "NE", "Nevada": "NV", "New-Hampshire": "NH", 
+    "New-Jersey": "NJ", "New-Mexico": "NM", "New-York": "NY", "North-Carolina": "NC", 
+    "North-Dakota": "ND", "Ohio": "OH", "Oklahoma": "OK", "Oregon": "OR", 
+    "Pennsylvania": "PA", "Rhode-Island": "RI", "South-Carolina": "SC", "South-Dakota": "SD", 
+    "Tennessee": "TN", "Texas": "TX", "Utah": "UT", "Vermont": "VT", "Virginia": "VA", 
+    "Washington": "WA", "West-Virginia": "WV", "Wisconsin": "WI", "Wyoming": "WY"
 }
+
+
 
 
 base_url = "https://www.nytimes.com/interactive/2024/11/05/us/elections/results-{}-president.html"
@@ -35,6 +57,7 @@ base_url = "https://www.nytimes.com/interactive/2024/11/05/us/elections/results-
 all_states_data = []
 trump = 0
 kamala = 0
+otherVotes = 0
 
 # Iterate over each state
 for state in states:
@@ -113,11 +136,11 @@ for state in states:
         if len(temp) == 6:
             trump += temp[2] * (temp[4] / temp[5] - temp[4])
             kamala += temp[3] * (temp[4] / temp[5] - temp[4])
+            otherVotes += other * (temp[4] / temp[5] - temp[4])
             all_states_data.append(temp)
-            print(temp)
-
-print(trump)
-print(kamala)
+            if temp[5] != 1: 
+                print(temp)
+            #print(temp)
 
 driver.get('https://www.nytimes.com/interactive/2024/11/05/us/elections/results-president.html')
 time.sleep(2)
@@ -133,26 +156,44 @@ votesRep = soup.find(class_='footer-labels gop eln-1ljsxb2')
 if votesRep:
     temp = votesRep.find(class_='all-votes-numbers eln-1ljsxb2').get_text(strip=True).replace(",", "").split(" ")
     trumpvotes = int(temp[0])
-print("CURRENT")
-print("Kamala Votes:", kamalavotes)
-print("Trump Votes:", trumpvotes)
-#this is actual total votes counted Nov 11th 11:45 Am
-allVotes = trumpvotes + kamalavotes + 720199 + 692561 + 615674 + 363403
-print((trumpvotes)/(allVotes))
-print((kamalavotes) / (allVotes))
-print((trumpvotes)/(allVotes) - (kamalavotes) / (allVotes))
-
-print("-----------------")
-
-print("PROJECTED")
-print(kamalavotes)
-print(trumpvotes)
 driver.quit()
+
+print("------------------------")
+
+print("Projected Trump Additional Votes:", trump)
+print("Projected Kamala Additional Votes:", kamala)
 projectedKamala = kamala + kamalavotes
 projectedTrump = trump + trumpvotes
-#this was the % of votes said to have been counted Nov 10th 12:42 PM
-projectedTotal = allVotes / 0.951
+print("Projected Total Kamala Votes:", projectedKamala)
+print("Projected Total Trump Votes:", projectedTrump)
 
-print((projectedTrump/projectedTotal))
-print((projectedKamala/projectedTotal))
-print((projectedTrump/projectedTotal) - (projectedKamala/projectedTotal))
+print("------------------------")
+
+print("CURRENT")
+print("Current Votes for Kamala:", kamalavotes)
+print("Current Votes for Trumo:", trumpvotes)
+#UPDATE CONSTANTLY
+allVotes = trumpvotes + kamalavotes + 720000 + 693000 + 616071 + 363562
+print("Current Trump Percentage:", (trumpvotes)/(allVotes))
+print("Current Kamala Percentage:", (kamalavotes) / (allVotes))
+print("Current Margin:", (trumpvotes)/(allVotes) - (kamalavotes) / (allVotes))
+
+print("------------------------")
+
+print("PROJECTED WITH NYT TOTAL DATA")
+#UPDATE CONSTANTLY
+projectedTotal = allVotes / 0.953
+print("Projected NYT Total: ", projectedTotal)
+print("Projected NYT Trump Percent:", (projectedTrump/projectedTotal))
+print("Projected NYT Kamala Percent:", (projectedKamala/projectedTotal))
+print("Projected NYT other vote:", (1-(projectedTrump/projectedTotal) - (projectedKamala/projectedTotal)))
+print("Projected NYT Margin:", (projectedTrump/projectedTotal) - (projectedKamala/projectedTotal))
+
+print("------------------------")
+
+print("PROJECTION WITHOUT NYT TOTAL DATA")
+print("NO NYT Projected Total Votes:", (allVotes + kamala + trump + otherVotes))
+print("No NYT Projected Trump Percent:", (projectedTrump/ (allVotes + kamala + trump + otherVotes)))
+print("No NYT Projected Kamala Percent:", (projectedKamala/ (allVotes + kamala + trump + otherVotes)))
+print("No NYT Projected Other Percent:", (1 - (projectedKamala/ (allVotes + kamala + trump + otherVotes)) - (projectedTrump/ (allVotes + kamala + trump + otherVotes))))
+print("No NYT Projected Margin:", ((projectedTrump/ (allVotes + kamala + trump + otherVotes)) - (projectedKamala/ (allVotes + kamala + trump + otherVotes))))
