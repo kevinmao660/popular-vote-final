@@ -29,11 +29,10 @@ driver.implicitly_wait(5)
 # }
 
 states = [
-    "Arizona", "California", "Colorado",
-    "Connecticut", "Illinois", "Maryland",
+    "California",
+    "Connecticut",
     "Mississippi", "New-Jersey", "New-York", 
-    "Oregon", "Pennsylvania",
-    "Utah", "Virginia", "Washington",
+    "Oregon","Virginia",
 ]
 
 abr = {
@@ -134,9 +133,9 @@ for state in states:
             temp.append(percent)
 
         if len(temp) == 6:
-            trump += temp[2] * (temp[4] / temp[5] - temp[4])
-            kamala += temp[3] * (temp[4] / temp[5] - temp[4])
-            otherVotes += other * (temp[4] / temp[5] - temp[4])
+            trump += temp[2] * (temp[4] / temp[5] - temp[4]) * 3
+            kamala += temp[3] * (temp[4] / temp[5] - temp[4]) * 3
+            otherVotes += other * (temp[4] / temp[5] - temp[4]) * 3
             all_states_data.append(temp)
             if temp[5] != 1: 
                 print(temp)
@@ -162,6 +161,8 @@ print("------------------------")
 
 print("Projected Trump Additional Votes:", trump)
 print("Projected Kamala Additional Votes:", kamala)
+print("Projected other Additional Votes:", otherVotes)
+print("Percent Kamal: ", (kamala / (trump + kamala)))
 projectedKamala = kamala + kamalavotes
 projectedTrump = trump + trumpvotes
 print("Projected Total Kamala Votes:", projectedKamala)
@@ -173,7 +174,7 @@ print("CURRENT")
 print("Current Votes for Kamala:", kamalavotes)
 print("Current Votes for Trumo:", trumpvotes)
 #UPDATE CONSTANTLY
-allVotes = trumpvotes + kamalavotes + 720000 + 693000 + 616071 + 363562
+allVotes = trumpvotes + kamalavotes + 773000 + 749000 + 639000 + 387000
 print("Current Trump Percentage:", (trumpvotes)/(allVotes))
 print("Current Kamala Percentage:", (kamalavotes) / (allVotes))
 print("Current Margin:", (trumpvotes)/(allVotes) - (kamalavotes) / (allVotes))
@@ -182,7 +183,7 @@ print("------------------------")
 
 print("PROJECTED WITH NYT TOTAL DATA")
 #UPDATE CONSTANTLY
-projectedTotal = allVotes / 0.953
+projectedTotal = allVotes / 0.995
 print("Projected NYT Total: ", projectedTotal)
 print("Projected NYT Trump Percent:", (projectedTrump/projectedTotal))
 print("Projected NYT Kamala Percent:", (projectedKamala/projectedTotal))
